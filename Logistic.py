@@ -43,7 +43,7 @@ def gradient(X, Y):
 
 
 #带正则的梯度下降法
-def gradient(X, Y):
+def gradient_reg(X, Y):
     W = np.mat(np.linspace(0,0,m+1))#1*(m+1)
     iter = 0
     g = gra(X, Y, W)
