@@ -35,7 +35,21 @@ def gradient(X, Y):
     g = gra(X, Y, W)
     while((iter < max_iter)):
         g = gra(X, Y, W)
-        W = W - step*g #+ L*W
+        W = W - step*g 
+        if (g.dot(g.T) < stop_value):
+            break
+        iter += 1
+    return W
+
+
+#带正则的梯度下降法
+def gradient(X, Y):
+    W = np.mat(np.linspace(0,0,m+1))#1*(m+1)
+    iter = 0
+    g = gra(X, Y, W)
+    while((iter < max_iter)):
+        g = gra(X, Y, W)
+        W = W - step*g + L*W
         if (g.dot(g.T) < stop_value):
             break
         iter += 1
