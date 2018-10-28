@@ -11,24 +11,36 @@ scale1 = 20
 m = 2  # X属性个数
 num0 = 100  # 训练集中Y=0类大小
 num1 = 100
-test_num0 = 200  # 测试集中Y=0类大小
-test_num1 = 200
+test_num0 = 100  # 测试集中Y=0类大小
+test_num1 = 100
 step = 0.01  # 梯度下降步长
 max_iter = 20000  # 梯度下降最大迭代次数
 stop_value = 0.000001  # 梯度下降退出条件
-L = math.e**(-8)  # 正则项系数
+L = -math.e**(-10)  # 正则项系数
 
 
 # 当X维度为2时，用于画出分类图像
 def draw(X0, X1, Y, W, choose):  # 画函数图像
     X = np.vstack((X0, X1))
+    R = recall(X,Y,W)
+    P = precision(X,Y,W)
+    F1 = F1score(R,P)
     plt.title("Logistic function for test"+choose+"\nAccuracy="+str("%.2f" % accuracy(X, Y, W))+"    Precision=" +
-              str("%.2f" % precision(X, Y, W))+"    Recall="+str("%.2f" % recall(X, Y, W)))
+              str("%.2f" % P)+"    Recall="+str("%.2f" % R)+"    F1 score="+str("%.2f"%F1))
     plt.scatter(X0.transpose().tolist()[
                 1], X0.transpose().tolist()[2], label="Y = 0")
     plt.scatter(X1.transpose().tolist()[
                 1], X1.transpose().tolist()[2], label="Y = 1")
-    X = np.linspace(loc0-3*scale0, loc1+3*scale1, 2)
+    max = loc1
+    min = loc0
+    min_scale = scale0
+    max_scale = scale1
+    if loc0>loc1:
+        max = loc0
+        min = loc1
+        max_scale = scale0
+        min_scale = scale1
+    X = np.linspace(min-3*min_scale, max+3*max_scale, 2)
     W = W.tolist()[0]
     plt.plot(X, -(W[0]+W[1]*X)/W[2])
     plt.legend()
@@ -179,6 +191,11 @@ def recall(X, Y, W):
     return TP/real_one
 
 
+#计算F1score
+def F1score(R,P):
+    return 2*P*R/(P+R)
+
+
 # 生成X数据集
 def birthX(lable, loc, scale, num):
     X = np.linspace(1, 1, num)
@@ -273,9 +290,13 @@ def read_test():
 
 # 打印输出Accuracy,precision,recall
 def print_data(X, Y, W):
+    R = recall(X,Y,W)
+    P = recall(X,Y,W)
+    F1 = F1score(R,P)
     print("accuracy:"+str("%.2f" % accuracy(X, Y, W)))  # 计算accuracy并输出
-    print("precision:"+str("%.2f" % precision(X, Y, W)))  # 计算precision并输出
-    print("recall:"+str("%.2f" % recall(X, Y, W)))  # 计算recall并输出
+    print("precision:"+str("%.2f" % P))  # 计算precision并输出
+    print("recall:"+str("%.2f" % R))  # 计算recall并输出
+    print("F1 score:"+str("%2f"%F1))
 
 
 # 随机生成数据并进行训练及测试
